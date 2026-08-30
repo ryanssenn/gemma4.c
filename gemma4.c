@@ -635,11 +635,11 @@ void benchmark(Model *model, InferenceState *state, int prefill_tokens, int gene
     if (generated_tokens > 0) {
         int token = 2;
         double start = time_seconds();
-        for (int position = 0; position < generated_tokens; position++) {
+        for (int position = prefill_tokens; position < prefill_tokens + generated_tokens; position++) {
             forward(model, state, &token, 1, position);
             token = sample(logits(model, state, 0), VOCAB_SIZE, 0.0f);
         }
-        printf("tg%d %.2f tok/s\n", generated_tokens, (double)generated_tokens / (time_seconds() - start));
+        printf("tg%d@d%d %.2f tok/s\n", generated_tokens, prefill_tokens, (double)generated_tokens / (time_seconds() - start));
     }
 }
 

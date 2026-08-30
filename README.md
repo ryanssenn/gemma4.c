@@ -10,12 +10,27 @@ An educational project made to understand how LLM inference works. The full infe
 
 Measured on an AMD Ryzen 7 7700 using the default native build.
 
-| Implementation | Prefill (pp512) | Decode (tg128) |
-| -------------- | --------------: | -------------: |
-| gemma4.c (int8) | 638.86 ± 2.93 tok/s | 25.90 ± 0.01 tok/s |
-| llama.cpp (Q8_0) | 276.32 ± 1.85 tok/s | 23.83 ± 0.01 tok/s |
+### Prefill (tok/s)
 
-Results are the mean ± sample standard deviation over 12 timed runs after one discarded warmup, with each runtime using its fastest tested thread count. Both were built natively for CPU and dynamically quantize matrix inputs to int8.
+| Prompt tokens | gemma4.c (int8) | llama.cpp (Q8_0) |
+| ------------: | --------------: | ----------------: |
+| 512 | 636.85 | 275.44 |
+| 2,048 | 495.65 | 258.15 |
+| 8,192 | 253.85 | 220.97 |
+| 16,384 | 106.61 | 188.85 |
+
+### Decode (tok/s)
+
+| Starting context | gemma4.c (int8) | llama.cpp (Q8_0) |
+| ---------------: | --------------: | ----------------: |
+| 512 | 25.04 | 22.71 |
+| 2,048 | 23.96 | 21.28 |
+| 8,192 | 20.28 | 17.80 |
+| 16,384 | 16.78 | 14.23 |
+
+Prefill measures the time to process the stated number of prompt tokens. Decode first fills the KV cache to the stated depth, then measures 128 single-token steps. Results are the mean of three timed runs after one discarded warmup. Both implementations use FP32 KV caches, 512-token batches, eight CPU threads, and native builds.
+
+The benchmark command takes the prefill length followed by the number of decode steps:
 
 ```bash
 ./run -m ./gemma4-E2B-int8.bin --bench 512 128

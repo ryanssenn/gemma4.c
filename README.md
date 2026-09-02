@@ -14,21 +14,21 @@ Measured on an AMD Ryzen 7 7700 using the default native build.
 
 | Prompt tokens | gemma4.c (int8) | llama.cpp (Q8_0) |
 | ------------: | --------------: | ----------------: |
-| 512 | 636.85 | 275.44 |
-| 2,048 | 495.65 | 258.15 |
-| 8,192 | 253.85 | 220.97 |
-| 16,384 | 106.61 | 188.85 |
+| 512 | 630.73 | 272.69 |
+| 2,048 | 494.14 | 258.56 |
+| 8,192 | 254.02 | 223.99 |
+| 16,384 | 106.36 | 188.60 |
 
 ### Decode (tok/s)
 
 | Starting context | gemma4.c (int8) | llama.cpp (Q8_0) |
 | ---------------: | --------------: | ----------------: |
-| 512 | 25.04 | 22.71 |
-| 2,048 | 23.96 | 21.28 |
-| 8,192 | 20.28 | 17.80 |
-| 16,384 | 16.78 | 14.23 |
+| 512 | 25.16 | 22.67 |
+| 2,048 | 24.04 | 21.28 |
+| 8,192 | 20.35 | 17.82 |
+| 16,384 | 16.80 | 14.26 |
 
-Prefill measures the time to process the stated number of prompt tokens. Decode first fills the KV cache to the stated depth, then measures 128 single-token steps. Results are the mean of three timed runs after one discarded warmup. Both implementations use FP32 KV caches, 512-token batches, eight CPU threads, and native builds.
+Prefill measures the time to process the stated number of prompt tokens. Decode first fills the KV cache to the stated depth, then measures 128 single-token steps. Both include the logits needed to produce the next token, but exclude sampling and terminal output. Results are the mean of three timed runs after one discarded warmup. Both implementations use FP32 KV caches, 512-token batches, eight CPU threads, and native builds.
 
 The benchmark command takes the prefill length followed by the number of decode steps:
 

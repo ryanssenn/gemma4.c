@@ -630,14 +630,15 @@ void benchmark(Model *model, InferenceState *state, int prefill_tokens, int gene
             state->token_ids[i] = 2 + i % 1000;
         double start = time_seconds();
         prefill(model, state, state->token_ids, prefill_tokens, 0);
+        (void)logits(model, state, (prefill_tokens - 1) % BATCH_SIZE);
         printf("pp%d %.2f tok/s\n", prefill_tokens, (double)prefill_tokens / (time_seconds() - start));
     }
     if (generated_tokens > 0) {
-        int token = 2;
+        const int token = 2;
         double start = time_seconds();
         for (int position = prefill_tokens; position < prefill_tokens + generated_tokens; position++) {
             forward(model, state, &token, 1, position);
-            token = sample(logits(model, state, 0), VOCAB_SIZE, 0.0f);
+            (void)logits(model, state, 0);
         }
         printf("tg%d@d%d %.2f tok/s\n", generated_tokens, prefill_tokens, (double)generated_tokens / (time_seconds() - start));
     }
@@ -691,7 +692,6 @@ int main(int argc, char **argv) {
     munmap(model, (size_t)st.st_size);
     return 0;
 }
-
 //      |\__/,|   (`\_
 //    *.|o o  |*   ) )
 //---(((---(((------------------

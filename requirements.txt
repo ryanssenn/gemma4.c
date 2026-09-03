@@ -4,4 +4,5 @@ numpy
 safetensors
 torch
 tqdm
-transformers==5.6.2
+transformers==5.10.0
+
